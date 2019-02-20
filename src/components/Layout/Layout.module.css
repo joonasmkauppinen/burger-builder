@@ -1,0 +1,10 @@
+.toolbar {
+  font-weight: 600;
+  padding: 16px;
+  color: white;
+  background-color: rgb(243, 52, 18);
+}
+
+.content {
+  margin-top: 40px;
+}
