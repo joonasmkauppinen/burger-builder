@@ -5,10 +5,13 @@ import BurgerIngredient from './BurgerIngredient/BurgerIngredient';
 
 const burger = props => {
 
-  const userIngredients = Object.keys(props.ingredients)
+  let userIngredients = Object.keys(props.ingredients)
     .map(ingredientKey => [...Array(props.ingredients[ingredientKey])]
       .map((_, i) => <BurgerIngredient key={ingredientKey + i} type={ingredientKey} />)
-  );
+  )
+  .reduce((arr, el) => arr.concat(el), []);
+
+  if (userIngredients.length === 0) userIngredients = <p>Please add some ingredients.</p>;
 
   return (
     <div className={styles['burger']}>
