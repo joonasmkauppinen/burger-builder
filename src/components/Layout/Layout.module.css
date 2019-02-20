@@ -1,8 +1,9 @@
 .toolbar {
   font-weight: 600;
   padding: 16px;
-  color: white;
-  background-color: rgb(243, 52, 18);
+  color: rgb(39, 39, 39);
+  background-color: white;
+  box-shadow: 0 1px 8px #dadada;
 }
 
 .content {

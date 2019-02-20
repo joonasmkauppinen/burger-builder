@@ -1,0 +1,7 @@
+.build-controls {
+  display: inline-flex;
+  flex-flow: column;
+  align-items: flex-end;
+  margin: auto;
+  padding: 10px 0;
+}

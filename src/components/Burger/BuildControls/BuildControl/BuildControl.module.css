@@ -1,0 +1,23 @@
+.build-control {
+  display: flex;
+}
+
+h3, p {
+  margin: 0;
+}
+
+button {
+  all: unset;
+  color: black;
+  text-align: center;
+  background-color: lightgreen;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: solid 1px green;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: red;
+}
