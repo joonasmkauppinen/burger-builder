@@ -11,7 +11,7 @@ const burger = props => {
   )
   .reduce((arr, el) => arr.concat(el), []);
 
-  if (userIngredients.length === 0) userIngredients = <p>Please add some ingredients.</p>;
+  if (userIngredients.length === 0) userIngredients = <p>Add some ingredients 🥗</p>;
 
   return (
     <div className={styles['burger']}>

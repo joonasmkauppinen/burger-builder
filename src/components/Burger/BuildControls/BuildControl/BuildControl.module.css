@@ -1,23 +1,42 @@
 .build-control {
   display: flex;
+  margin-bottom: 8px;
 }
 
 h3, p {
   margin: 0;
+  color: #3e3e3e;
+}
+
+.build-control h3 {
+  margin-right: 8px;
+  line-height: 1.8;
+}
+
+.build-control p {
+  font-family: 'Roboto Mono', serif;
+  width: 20px;
+  text-align: center;
+  margin: 0 4px;
+  line-height: 2;
 }
 
 button {
   all: unset;
-  color: black;
+  color: #2d714f;
   text-align: center;
-  background-color: lightgreen;
-  width: 24px;
-  height: 24px;
+  background-color: #4becbe;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: solid 1px green;
+  border: solid 1px #43cea6;
   cursor: pointer;
+  font-weight: 700;
+  font-size: 1.2rem;
+  line-height: 1.3;
 }
 
 button:disabled {
-  background-color: red;
+  background-color: #e0e0e0;
+  border: solid 1px #c5c5c5;
 }
