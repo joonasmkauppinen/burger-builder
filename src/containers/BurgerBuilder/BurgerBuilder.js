@@ -28,48 +28,27 @@ class BurgerBuilder extends Component {
   };
 
   updateCanCheckoutState = ingredients => {
-    const sum = Object.values({ ...ingredients }).reduce(
-      (sum, el) => sum + el,
-      0
-    );
+    const sum = Object.values({ ...ingredients })
+      .reduce((sum, el) => sum + el, 0);
     this.setState({ canCheckout: sum > 0 });
   };
 
-  addIncredientHandler = type => {
-    const oldCount = this.state.ingredients[type];
-    const updatedCount = oldCount + 1;
+  modifyIncredientsHandler = (type, amount) => {
     const updatedIncredients = { ...this.state.ingredients };
-    updatedIncredients[type] = updatedCount;
-
-    const oldPrice = this.state.totalPrice;
-    const newPrice = oldPrice + INCREDIENT_PRICES[type];
-
+    updatedIncredients[type] += amount;
+    const incredientPrice = INCREDIENT_PRICES[type] * amount;
+    const newPrice = this.state.totalPrice + incredientPrice;
     this.setState({ totalPrice: newPrice, ingredients: updatedIncredients });
     this.updateCanCheckoutState(updatedIncredients);
-  };
-
-  removeIncredientHandler = type => {
-    const oldCount = this.state.ingredients[type];
-    const updatedCount = oldCount - 1;
-    const updatedIncredients = { ...this.state.ingredients };
-    updatedIncredients[type] = updatedCount;
-
-    const oldPrice = this.state.totalPrice;
-    const newPrice = oldPrice - INCREDIENT_PRICES[type];
-
-    this.setState({ totalPrice: newPrice, ingredients: updatedIncredients });
-    this.updateCanCheckoutState(updatedIncredients);
-  };
+  }
 
   checkoutHandler = () => {
-    this.setState({showModal: true});
+    this.setState({ showModal: true });
   }
 
   render() {
-    const disabledInfo = {
-      ...this.state.ingredients
-    };
 
+    const disabledInfo = { ...this.state.ingredients };
     for (let key in disabledInfo) {
       disabledInfo[key] = disabledInfo[key] <= 0;
     }
@@ -83,8 +62,8 @@ class BurgerBuilder extends Component {
         <div className={styles['card']}>
           <BuildControls
             incredients={this.state.ingredients}
-            onAdd={this.addIncredientHandler}
-            onRemove={this.removeIncredientHandler}
+            onAdd={this.modifyIncredientsHandler}
+            onRemove={this.modifyIncredientsHandler}
             disabled={disabledInfo}
           />
           <hr />

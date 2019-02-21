@@ -17,8 +17,8 @@ const buildControls = props => (
         key={ctrl.label}
         label={ctrl.label}
         amount={props.incredients[ctrl.type]}
-        increace={() => props.onAdd(ctrl.type)}
-        decreace={() => props.onRemove(ctrl.type)}
+        increace={() => props.onAdd(ctrl.type, 1)}
+        decreace={() => props.onRemove(ctrl.type, -1)}
         disabled={props.disabled[ctrl.type]}
       />
     ))}
