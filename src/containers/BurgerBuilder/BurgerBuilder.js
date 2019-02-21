@@ -28,8 +28,10 @@ class BurgerBuilder extends Component {
   };
 
   updateCanCheckoutState = ingredients => {
-    const sum = Object.values({ ...ingredients })
-      .reduce((sum, el) => sum + el, 0);
+    const sum = Object.values({ ...ingredients }).reduce(
+      (sum, el) => sum + el,
+      0
+    );
     this.setState({ canCheckout: sum > 0 });
   };
 
@@ -40,14 +42,22 @@ class BurgerBuilder extends Component {
     const newPrice = this.state.totalPrice + incredientPrice;
     this.setState({ totalPrice: newPrice, ingredients: updatedIncredients });
     this.updateCanCheckoutState(updatedIncredients);
-  }
+  };
 
   checkoutHandler = () => {
     this.setState({ showModal: true });
+  };
+
+  dismissCheckoutHandler = () => {
+    console.log('Checkout dismissed');
+    this.setState({ showModal: false });
+  };
+
+  didCheckout = () => {
+    alert('TODO: did checkout');
   }
 
   render() {
-
     const disabledInfo = { ...this.state.ingredients };
     for (let key in disabledInfo) {
       disabledInfo[key] = disabledInfo[key] <= 0;
@@ -55,8 +65,16 @@ class BurgerBuilder extends Component {
 
     return (
       <Aux>
-        <Modal show={this.state.showModal}>
-          <OrderSummary ingredients={this.state.ingredients} />
+        <Modal
+          show={this.state.showModal}
+          onDismiss={this.dismissCheckoutHandler}
+        >
+          <OrderSummary
+            ingredients={this.state.ingredients}
+            total={this.state.totalPrice}
+            dismiss={this.dismissCheckoutHandler}
+            didCheckout={this.didCheckout}
+          />
         </Modal>
         <Burger ingredients={this.state.ingredients} />
         <div className={styles['card']}>
