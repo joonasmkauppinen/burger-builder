@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 
-import styles from './BurgerBuilder.module.css';
-import Aux from '../../hoc/Auxiliary';
-import Burger from '../../components/Burger/Burger';
+import axios from '../../axios-orders';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
-import Modal from '../../components/UI/Modal/Modal';
+import Burger from '../../components/Burger/Burger';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
+import Modal from '../../components/UI/Modal/Modal';
+import Spinner from '../../components/UI/Spinner/Spinner';
+import Aux from '../../hoc/Auxiliary';
+import styles from './BurgerBuilder.module.css';
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
 const INCREDIENT_PRICES = {
   salad: 0.3,
@@ -16,16 +19,22 @@ const INCREDIENT_PRICES = {
 
 class BurgerBuilder extends Component {
   state = {
-    ingredients: {
-      salad: 1,
-      bacon: 1,
-      cheese: 1,
-      meat: 1
-    },
+    ingredients: null,
     totalPrice: 5.6,
     canCheckout: true,
-    showModal: false
+    showModal: false,
+    loading: false,
+    initError: false
   };
+
+  componentDidMount() {
+    axios.get('https://react-burger-builder-sha256.firebaseio.com/ingredients.json')
+      .then(res => {
+        console.log(res);
+        this.setState({ ingredients: res.data });
+      })
+      .catch(_ => this.setState({ initError: true }));
+  }
 
   updateCanCheckoutState = ingredients => {
     const sum = Object.values({ ...ingredients }).reduce(
@@ -54,7 +63,30 @@ class BurgerBuilder extends Component {
   };
 
   didCheckout = () => {
-    alert('TODO: did checkout');
+
+    this.setState({ loading: true });
+
+    console.log('[BurgerBuilder.js] did checkout');
+
+    const order = {
+      ingredients: this.state.ingredients,
+      price: this.state.totalPrice,
+      customer: {
+        name: 'John Doe',
+        email: 'john.doe@gmail.com',
+        address: {
+          street: 'Rainbowroad 1337 A 1',
+          zipcode: '88519',
+          country: 'US of A'
+        }
+      },
+      deliveryMethod: 'fastest'
+    }
+
+    axios.post('/orders.json', order)
+      .then(res => console.log(res) )
+      .catch(err => console.log(err) )
+      .finally(_ => this.setState({ loading: false, showModal: false }) );
   }
 
   render() {
@@ -62,43 +94,59 @@ class BurgerBuilder extends Component {
     for (let key in disabledInfo) {
       disabledInfo[key] = disabledInfo[key] <= 0;
     }
-    
+
+    let orderSummary = null;
+
+    let burger = this.state.initError ? <p>Failed to connect to server :/</p> : <Spinner />;
+   if ( this.state.ingredients ) {
+     burger = (
+       <Aux>
+         <Burger ingredients={this.state.ingredients} />
+         <div className={styles['card']}>
+           <BuildControls
+             incredients={this.state.ingredients}
+             onAdd={this.modifyIncredientsHandler}
+             onRemove={this.modifyIncredientsHandler}
+             disabled={disabledInfo}
+           />
+           <hr />
+           <div className={styles['total']}>
+             Total: <strong>${this.state.totalPrice.toFixed(2)}</strong>
+           </div>
+           <button
+             className={styles['checkout']}
+             disabled={!this.state.canCheckout}
+             onClick={this.checkoutHandler}
+           >
+             CHECKOUT
+           </button>
+         </div>
+       </Aux>
+     );
+
+     orderSummary =
+        <OrderSummary
+          ingredients={this.state.ingredients}
+          total={this.state.totalPrice}
+          dismiss={this.dismissCheckoutHandler}
+          didCheckout={this.didCheckout}
+        />
+   }
+
+   if ( this.state.loading ) orderSummary = <Spinner />
+
     return (
       <Aux>
         <Modal
           show={this.state.showModal}
           onDismiss={this.dismissCheckoutHandler}
         >
-          <OrderSummary
-            ingredients={this.state.ingredients}
-            total={this.state.totalPrice}
-            dismiss={this.dismissCheckoutHandler}
-            didCheckout={this.didCheckout}
-          />
+        { orderSummary }
         </Modal>
-        <Burger ingredients={this.state.ingredients} />
-        <div className={styles['card']}>
-          <BuildControls
-            incredients={this.state.ingredients}
-            onAdd={this.modifyIncredientsHandler}
-            onRemove={this.modifyIncredientsHandler}
-            disabled={disabledInfo}
-          />
-          <hr />
-          <div className={styles['total']}>
-            Total: <strong>${this.state.totalPrice.toFixed(2)}</strong>
-          </div>
-          <button
-            className={styles['checkout']}
-            disabled={!this.state.canCheckout}
-            onClick={this.checkoutHandler}
-          >
-            CHECKOUT
-          </button>
-        </div>
+        { burger }
       </Aux>
     );
   }
 }
 
-export default BurgerBuilder;
+export default withErrorHandler(BurgerBuilder, axios);
